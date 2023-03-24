@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plena Inclusion</title>
+
+    <!-- CSS (load bootstrap from a CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top:50px; }
+    </style>
+</head>
+<body class="container">
+    <main>
+        <h1>POST TUTORIAL</h1>
+        <div class="form">
+            <form action="/login" method="post">
+                Username: <input type="text" name="username" value="" /><br><br>
+                Password: <input type="text" name="password" value="" /><br><br>
+                <input type="submit" value="Login"/><br><br><hr>
+            </form>
+            <form action="/getUsers" method="post">
+                <input type="submit" value="getUsers"/>
+            </form>
+            <form action="/registerUser" method="post">
+                Username: <input type="text" name="username" value="" /><br><br>
+                Password: <input type="text" name="password" value="" /><br><br>
+                confPassword: <input type="text" name="confPassword" value=""/><br><br>
+                <input type="submit" value="registerUser"/><br><br><hr>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <p class="text-center text-muted">© Copyright 2023</p>
+    </footer>
+</body>
+</html>
