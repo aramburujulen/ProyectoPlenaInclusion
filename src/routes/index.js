@@ -1,4 +1,5 @@
 import express from "express";
+import { AddActivity } from "../controllers/activities.js";
 import  { GetUsers, Register }  from "../controllers/users.js";
 const router = express.Router();
 
@@ -18,4 +19,5 @@ router.post("/getUsers", GetUsers);
 
 
 router.post("/registerUser", Register);
+router.post("/addActivity", AddActivity);
 export default router;
