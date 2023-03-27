@@ -17,6 +17,5 @@ const Users = db.define("users",{
 (async () => {
     await db.sync();
 })();
-
 export default Users;
 

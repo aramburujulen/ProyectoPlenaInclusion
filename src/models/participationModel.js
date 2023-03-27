@@ -3,7 +3,9 @@ import db from "../config/database.js";
 import Activities from "./activityModel.js";
 import Users from "./userModel.js";
 
-const U_A_Participation = db.define("U_A_Participation", {
+const { DataTypes } = Sequelize;
+
+const Participation = db.define("Participation", {
     userId:{
         type: DataTypes.INTEGER,
         references: {
@@ -18,12 +20,15 @@ const U_A_Participation = db.define("U_A_Participation", {
             key: 'id'
         }
     }
+},{
+    freezeTableName: true
 });
 
-Users.belongsToMany(Activities, { through: U_A_Participation });
-Activities.belongsToMany(Users, { through: U_A_Participation });
+
+Users.belongsToMany(Activities, { through: Participation });
+Activities.belongsToMany(Users, { through: Participation });
 (async () => {
     await db.sync();
 })();
 
-export default U_A_Participation;
+export default Participation;
