@@ -1,6 +1,6 @@
 import express from "express";
-import { AddActivity } from "../controllers/activities.js";
-import { GetParticipations } from "../controllers/participations.js";
+import { AddActivity, GetActivities } from "../controllers/activities.js";
+import { AddParticipation, GetParticipations } from "../controllers/participations.js";
 import  { GetUsers, Register }  from "../controllers/users.js";
 const router = express.Router();
 
@@ -19,4 +19,7 @@ router.post("/login", (req, res) => {
 router.post("/getUsers", GetUsers);
 router.post("/registerUser", Register);
 router.post("/addActivity", AddActivity);
+router.post("/getActivities", GetActivities);
+router.post("/addParticipation", AddParticipation);
+router.post("/getParticipations", GetParticipations);
 export default router;

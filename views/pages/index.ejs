@@ -19,14 +19,15 @@
                 Password: <input type="text" name="password" value="" /><br><br>
                 <input type="submit" value="Login"/><br><br><hr>
             </form>
-            <form action="/getUsers" method="post">
-                <input type="submit" value="getUsers"/>
-            </form>
+            <h1>MANAGE USERS</h1>
             <form action="/registerUser" method="post">
                 Username: <input type="text" name="username" value="" /><br><br>
                 Password: <input type="text" name="password" value="" /><br><br>
                 confPassword: <input type="text" name="confPassword" value=""/><br><br>
                 <input type="submit" value="registerUser"/><br><br><hr>
+            </form>
+            <form action="/getUsers" method="post">
+                <input type="submit" value="getUsers"/>
             </form>
             <h1> ACTIVITIES </h1>
             <form action="/addActivity" method="post">
@@ -34,6 +35,19 @@
                 Description: <input type="text" name="description" value="" /><br><br>
                 Number of participants: <input type="number" name="maxParticipants" value=""/><br><br>
                 <input type="submit" value="addActivity"/><br><br><hr>
+                
+            </form>
+            <form action="/getActivities" method="post">
+                <input type="submit" value="getActivities"/>
+            </form>
+            <h1> PARTICIPATIONS </h1>
+            <form action="/addParticipation" method="post">
+                User ID: <input type="text" name="userId" value="" /><br><br>
+                Activity ID: <input type="text" name="activityId" value="" /><br><br>
+                <input type="submit" value="addParticipation"/><br><br><hr>
+            </form>
+            <form action="/getParticipations" method="post">
+                <input type="submit" value="getParticipations"/>
             </form>
         </div>
     </main>
