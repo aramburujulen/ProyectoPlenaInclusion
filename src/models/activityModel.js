@@ -14,6 +14,9 @@ const Activities = db.define("activities",{
     },
     maxParticipants:{
         type: DataTypes.INTEGER
+    },
+    date:{
+        type: DataTypes.DATEONLY
     }
 
 },{
