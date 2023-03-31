@@ -10,7 +10,7 @@ export const AddActivity = async(req, res) => {
             maxParticipants: maxParticipants,
             date: date,
         });
-        res.json({msg: "Your activity" +name+ "was added succesfully"});
+        res.json({msg: "Your activity " +name+ " was added succesfully"});
     }catch(error){
         console.log(error);
     }
@@ -19,7 +19,7 @@ export const AddActivity = async(req, res) => {
 export const GetActivities = async(req, res) => {
     try{
         const activities = await Activities.findAll({
-            attributes:["name", "description", "isActive", "maxParticipants", "date"]
+            attributes:["id", "name", "description", "isActive", "maxParticipants", "date"]
         });
         res.json(activities);
     }catch(error){

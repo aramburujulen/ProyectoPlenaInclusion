@@ -12,18 +12,12 @@
 </head>
 <body class="container">
     <main>
-        <h1>POST TUTORIAL</h1>
         <div class="form">
-            <form action="/login" method="post">
-                Username: <input type="text" name="username" value="" /><br><br>
-                Password: <input type="text" name="password" value="" /><br><br>
-                <input type="submit" value="Login"/><br><br><hr>
-            </form>
             <h1>MANAGE USERS</h1>
             <form action="/registerUser" method="post">
                 Username: <input type="text" name="username" value="" /><br><br>
                 Password: <input type="text" name="password" value="" /><br><br>
-                confPassword: <input type="text" name="confPassword" value=""/><br><br>
+                Confirm Password: <input type="text" name="confPassword" value=""/><br><br>
                 <input type="submit" value="registerUser"/><br><br><hr>
             </form>
             <form action="/getUsers" method="post">

@@ -26,7 +26,7 @@ const Participation = db.define("Participation", {
 Users.belongsToMany(Activities, { through: Participation });
 Activities.belongsToMany(Users, { through: Participation });
 /**
- * In order to access an attribute from one of the tables whose relationship create an N:N table, it is required for us to initialize
+ * In order to access an attribute from one of the tables whose relationship create an N:N table, it's required for us to initialize
  * an extra association between the N:N table and the one we want to get information from.
  */
 Participation.belongsTo(Activities);
