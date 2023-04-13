@@ -1,3 +1,4 @@
+import { Sequelize } from "sequelize";
 import Activities from "../models/activityModel.js";
 
 export const AddActivity = async(req, res) => {
@@ -22,6 +23,25 @@ export const GetActivities = async(req, res) => {
             attributes:["id", "name", "description", "isActive", "maxParticipants", "date"]
         });
         res.json(activities);
+    }catch(error){
+        console.log(error);
+    }
+}
+
+export const GetAvailableActivities = async(req, res) => {
+    try{
+        const {dateInit, dateEnd} = req.body;
+        const availableActivities = await Activities.findAll({
+            where: {
+                date: {
+                    [Sequelize.Op.between]: [dateInit, dateEnd],
+                },
+                isActive: true
+            },
+            attributes:["id", "name", "description", "maxParticipants", "date"],
+        });
+        console.log(dateInit, dateEnd)
+        res.json(availableActivities);
     }catch(error){
         console.log(error);
     }

@@ -41,8 +41,14 @@
                 Activity ID: <input type="text" name="activityId" value="" /><br><br>
                 <input type="submit" value="addParticipation"/><br><br><hr>
             </form>
-            <form action="/getParticipations" method="post">
-                <input type="submit" value="getParticipations"/>
+            <form action="/getUserParticipations" method="post">
+                Name of the user: <input type="text" name="nameToSearch" value="" /><br>
+                <input type="submit" value="getUserParticipations"/>
+            </form>
+            <form action="/getAvailableActivities" method="post">
+                Initial Date: <input type="date" name="dateInit" value="" /><br>
+                Ending Date: <input type="date" name="dateEnd" value="" /><br>
+                <input type="submit" value="getAvailableActivities"/><br><hr>
             </form>
         </div>
     </main>

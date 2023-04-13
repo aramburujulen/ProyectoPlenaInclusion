@@ -8,7 +8,6 @@ export const GetUsers = async(req, res) => {
         const users = await Users.findAll({
             attributes:["id","name","password"]
         });
-        //lista de un SELECT*("findall()")
         res.json(users);
     } catch(error){
         console.log(error);

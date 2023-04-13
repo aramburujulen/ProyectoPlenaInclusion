@@ -30,6 +30,7 @@ Activities.belongsToMany(Users, { through: Participation });
  * an extra association between the N:N table and the one we want to get information from.
  */
 Participation.belongsTo(Activities);
+Participation.belongsTo(Users);
 
 (async () => {
     await db.sync();

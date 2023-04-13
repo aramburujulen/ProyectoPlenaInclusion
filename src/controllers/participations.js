@@ -28,3 +28,26 @@ export const GetParticipations = async(req, res) => {
         console.log(error);
     }
 }
+
+export const GetParticipantParticipations = async(req, res) => {
+    try{
+        const {nameToSearch} = req.body;
+        const usersActivities = await Participation.findAll({
+            include: [{
+                model: Activities,
+                attributes: ['name']
+            }, {
+                model: Users,
+                where:{
+                    name: nameToSearch,
+                },
+                attributes: ['name']
+            }],
+            attributes: ['userId', 'activityId'],
+            }); 
+            if(usersActivities.length == 0)  res.json({msg: "Sorry, "+nameToSearch+" has not joined any activity yet"});
+            res.json(usersActivities);
+    }catch(error){
+        console.log(error);
+    }
+}
