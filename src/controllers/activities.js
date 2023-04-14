@@ -46,3 +46,17 @@ export const GetAvailableActivities = async(req, res) => {
         console.log(error);
     }
 }
+
+export const RemoveActivity = async(req, res) => {
+    try{
+        const{id} = req.body;
+        await Activities.destroy({
+            where: {
+                id: id,
+            }
+        });
+        res.json({msg: "ACTIVITY DELETED"});
+    }catch(error){
+        console.log(error);
+    }
+}
