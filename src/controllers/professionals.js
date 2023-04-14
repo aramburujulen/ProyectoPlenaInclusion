@@ -48,3 +48,66 @@ export const RemoveProfessional = async(req, res) => {
         console.log(error);
     }
 }
+
+export const ModifyProfessional = async(req, res) => {
+    try{
+        const {id, email, name, password, age, specialization, availability} = req.body;
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(password, salt);
+        var valuesParticipant = {
+            specialization: specialization,
+            availability: availability
+        }
+        var selectorParticipant = {
+            where: {
+                id:id
+            }
+        }
+        await Professionals.update(valuesParticipant, selectorParticipant);
+        var valuesUser = {
+            email: email,
+            name: name,
+            age: age,
+            password: hashPassword
+        }
+        const proUser = await Professionals.findOne({
+            where: {
+                id:id
+            }
+        })
+        var selectorUser = {
+            where: {
+                id: proUser.userId
+            }
+            
+        }
+        await Users.update(valuesUser, selectorUser);
+        res.json("Professional modified");
+    }catch(error){
+        console.log(error);
+    }
+}
+
+
+export const LogIn = async(req, res) => {
+    try{
+        const {email, password} = req.body;
+        const emailUser = await Users.findOne({
+            where: {
+                email: email,
+            }
+        });
+        if(!emailUser){
+            res.json({msg: "Wrong Email"});
+            return
+        }
+        var valid = await bcrypt.compare(password, emailUser.password);
+        if(!valid){
+            res.json({msg: "Wrong Password"});
+            return
+        }
+        res.json({msg: "Logged in succesfully"});
+    }catch(error){
+        console.log(error);
+    }
+}

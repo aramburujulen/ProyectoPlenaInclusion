@@ -51,3 +51,18 @@ export const GetParticipantParticipations = async(req, res) => {
         console.log(error);
     }
 }
+
+export const RemoveParticipation = async(req, res) => {
+    try{
+        const{idUs, idAc} = req.body;
+        await Participation.destroy({
+            where: {
+                activityId: idAc,
+                userId: idUs
+            }
+        });
+        res.json({msg: "Participation removed"});
+    }catch(error){
+        console.log(error);
+    }
+}

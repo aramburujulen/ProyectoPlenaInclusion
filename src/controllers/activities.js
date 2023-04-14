@@ -60,3 +60,24 @@ export const RemoveActivity = async(req, res) => {
         console.log(error);
     }
 }
+
+export const ModifyActivity = async(req, res) => {
+    try{
+        const{id, name, description, maxParticipants, date} = req.body;
+        var values = {
+            name: name,
+            description: description,
+            maxParticipants: maxParticipants,
+            date: date
+        };
+        var selector = {
+            where: {
+                id: id
+            }
+        };
+        await Activities.update(values, selector);
+        res.json({msg: "Activity changed"});
+    }catch(error){
+        console.log(error)
+    }
+}

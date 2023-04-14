@@ -71,6 +71,12 @@
                 Confirm Password: <input type="text" name="confPassword" value=""/><br><br>
                 <input type="submit" value="registerProfessional"/><br><br><hr>
             </form>
+            <h2> LOG IN </h2>
+            <form action="/logIn" method="post">
+                Email: <input type="text" name="email" value="" /><br><br>
+                Password: <input type="text" name="password" value="" /><br><br>
+            <input type="submit" value="logIn"/>
+            </form>
             <h1> DELETE FROM TABLES </h1>
             <form action="/removeActivity" method="post">
                 Activity ID: <input type="number" name="id" value="" /><br><br>
@@ -84,6 +90,40 @@
                 Professional ID: <input type="number" name="id" value="" /><br><br>
                 <input type="submit" value="removeProfessional"/><br><br><hr>
             </form>
+            <form action="/removeParticipation" method="post">
+                User ID: <input type="number" name="idUs" value="" /><br><br>
+                Activity ID: <input type="number" name="idAc" value="" /><br><br>
+                <input type="submit" value="removeParticipation"/><br><br><hr>
+            </form>
+            <h1> MODIFY RECORDS </h1>
+            <form action="/modifyParticipant" method="post">
+                ID Of Participant: <input type="number" name="id" value="" /><br><br>
+                New Email: <input type="text" name="email" value="" /><br><br>
+                New Name: <input type="text" name="name" value="" /><br><br>
+                New Age: <input type="number" name="age" value="" /><br><br>
+                New Disability: <input type="text" name="disability" value="" /><br><br>
+                <input type="submit" value="modifyParticipant"/><br><br><hr>
+            </form>
+            <form action="/modifyActivity" method="post">
+                ID Of Activity: <input type="number" name="id" value="" /><br><br>
+                New Name: <input type="text" name="name" value="" /><br><br>
+                New Description: <input type="text" name="description" value="" /><br><br>
+                New MaxPart: <input type="number" name="maxParticipants" value="" /><br><br>
+                New Date: <input type="date" name="date" value="" /><br><br>
+                <input type="submit" value="modifyActivity"/><br><br><hr>
+            </form>
+            <form action="/modifyProfessional" method="post">
+                ID Of Professional <input type="number" name="id" value="" /><br><br>
+                New Email: <input type="text" name="email" value="" /><br><br>
+                New Name: <input type="text" name="name" value="" /><br><br>
+                New Age: <input type="number" name="age" value="" /><br><br>
+                New Password: <input type="text" name="password" value="" /><br><br>
+                New Specialization: <input type="text" name="specialization" value="" /><br><br>
+                New Availability: <input type="text" name="availability" value="" /><br><br>
+                <input type="submit" value="modifyProfessional"/><br><br><hr>
+            </form>
+
+
         </div>
     </main>
     <footer>

@@ -1,6 +1,6 @@
 import Participants from "../models/participantModel.js";
 import generator from "generate-password";
-import bcrypt from "bcrypt";
+import bcrypt, { hash } from "bcrypt";
 import Users from "../models/userModel.js";
 
 
@@ -51,6 +51,50 @@ export const RemoveParticipant = async(req, res) => {
             }
         });
         res.json({msg: "PARTICIPANT DELETED"});
+    }catch(error){
+        console.log(error);
+    }
+}
+
+export const ModifyParticipant = async(req, res) => {
+    try{
+        const {id, email, name, age, disability} = req.body;
+        var password = generator.generate({
+            length: 10,
+            numbers: true
+        });
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(password, salt);
+        var valuesParticipant = {
+            disability: disability,
+            notifications: true
+        }
+        var selectorParticipant = {
+            where: {
+                id:id
+            }
+        }
+        await Participants.update(valuesParticipant, selectorParticipant);
+        var valuesUser = {
+            email: email,
+            name: name,
+            age: age,
+            password: hashPassword
+        }
+        const partUser = await Participants.findOne({
+            where: {
+                id:id
+            }
+        })
+        console.log(partUser.userId);
+        var selectorUser = {
+            where: {
+                id: partUser.userId
+            }
+            
+        }
+        await Users.update(valuesUser, selectorUser);
+        res.json("Participant modified, new password is: " +password);
     }catch(error){
         console.log(error);
     }

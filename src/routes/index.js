@@ -1,22 +1,15 @@
 import express from "express";
-import { AddActivity, GetActivities, GetAvailableActivities, RemoveActivity } from "../controllers/activities.js";
-import { AddParticipation, GetParticipantParticipations, GetParticipations } from "../controllers/participations.js";
+import { AddActivity, GetActivities, GetAvailableActivities, ModifyActivity, RemoveActivity } from "../controllers/activities.js";
+import { AddParticipation, GetParticipantParticipations, GetParticipations, RemoveParticipation } from "../controllers/participations.js";
 import  { GetUsers }  from "../controllers/users.js";
-import { RegisterProfessional, RemoveProfessional } from "../controllers/professionals.js";
-import { GenerateAccount, RemoveParticipant } from "../controllers/participants.js";
+import { LogIn, ModifyProfessional, RegisterProfessional, RemoveProfessional } from "../controllers/professionals.js";
+import { GenerateAccount, ModifyParticipant, RemoveParticipant } from "../controllers/participants.js";
 const router = express.Router();
 
 router.get("/", (req, res) => {
     res.render("pages/index");
 });
 
-router.post("/login", (req, res) => {
-    console.log(req.body);
-    res.render("pages/show_info", {
-        username: req.body.username,
-        password: req.body.password
-    });
-});
 //#region router
 router.post("/getUsers", GetUsers);
 router.post("/addActivity", AddActivity);
@@ -30,5 +23,10 @@ router.post("/generateAccount", GenerateAccount);
 router.post("/removeActivity", RemoveActivity);
 router.post("/removeParticipant", RemoveParticipant);
 router.post("/removeProfessional", RemoveProfessional);
+router.post("/removeParticipation", RemoveParticipation);
+router.post("/modifyParticipant", ModifyParticipant);
+router.post("/modifyActivity", ModifyActivity);
+router.post("/modifyProfessional", ModifyProfessional);
+router.post("/logIn", LogIn);
 //#endregion
 export default router;
