@@ -27,7 +27,6 @@ export const GetActivities = async(req, res) => {
         console.log(error);
     }
 }
-
 export const GetAvailableActivities = async(req, res) => {
     try{
         const {dateInit, dateEnd} = req.body;

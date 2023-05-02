@@ -24,9 +24,9 @@ const Login = () => {
                 userX = response.data.emailUser;
             });
             if(res === "¡Datos Correctos, Bienvenido!"){
+            //Load the user's dashboard
             navigate("/dashboard", {state: { user: userX }});
             }
-            //navigate("/registerAcc");
             
         } catch (error) {
             if (error.response) {
@@ -36,37 +36,44 @@ const Login = () => {
     }
 
     return (
-        <section className="hero has-background-grey-light is-fullheight is-fullwidth" style={{paddingBottom: "5em"}}>
+        <section className="hero has-background-light is-fullheight is-fullwidth" style={{paddingBottom: "5em"}}>
+
             <div className="hero-body">
-                <div className="container">
-                    <div className="columns is-centered">
-                        <div className="column is-4-desktop">
-                            <form onSubmit={Auth} className="box">
-                                <div className="field mt-5 has-text-centered">
-                                    <p className="has-text-centered" style={{ fontSize: 45 }}>PlenaInclusión</p>
-                                </div>
-                                <div className="field mt-5">
-                                    <label className="label">Email</label>
-                                    <div className="controls">
-                                        <input type="text" className="input" placeholder="Email/Correo" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                    </div>
-                                </div>
-                                <div className="field mt-5">
-                                    <label className="label">Password</label>
-                                    <div className="controls">
-                                        <input type="password" className="input" placeholder="******" value={password} onChange={(e) => setPassword(e.target.value)} />
-                                    </div>
-                                </div>
-                                <div className="field mt-5">
-                                    <button className="button is-success is-fullwidth">Login</button>
-                                </div>
-                                <div className="field mt-5 has-text-centered">
-                                <p onClick={Accountless}>¿No tienes cuenta?</p>
-                                </div>
-                            </form>
-                        </div>
+
+                <div className='columns is-centered is-vcentered is-responsive'>
+
+                    <div className='column is-flex-desktop is-hidden-mobile'>
+                        <img src='https://www.plenainclusion.org/wp-content/uploads/2021/04/Social-media-bro-1536x1536.png' class="img-fluid" style={{height:'100%  '}}></img>
                     </div>
+
+                    <div className="column is-full-mobile is-centered is-responsive">
+                        <form onSubmit={Auth} className="box">
+                            <div className="field mt-5 has-text-centered">
+                                <img src='https://www.plenainclusion.org/wp-content/uploads/2021/01/logo_plena-inclusion.png' class="img-fluid"></img>
+                            </div>
+                            <div className="field mt-5">
+                                <label className="label">Email</label>
+                                <div className="controls">
+                                    <input type="text" className="input" placeholder="Email/Correo" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                </div>
+                            </div>
+                            <div className="field mt-5">
+                                <label className="label">Password</label>
+                                <div className="controls">
+                                    <input type="password" className="input" placeholder="******" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                </div>
+                            </div>
+                            <div className="field mt-5">
+                                <button className="button is-success is-fullwidth">Login</button>
+                            </div>
+                            <div className="field mt-5 has-text-centered">
+                            <p onClick={Accountless}>Â¿No tienes cuenta?</p>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
+                
             </div>
         </section>
         

@@ -10,6 +10,7 @@ const ListOfActivities = () => {
     const [dateEnd, setDateEnd] = useState('');
     const navigate = useNavigate();
     const [cards, setCards] = useState([]);
+    const [joined, setJoined] = useState(false);
     var currentDate = new Date();
     var endDate = new Date();
     endDate.setDate(currentDate.getDate() + 7);
@@ -19,6 +20,7 @@ const ListOfActivities = () => {
     useEffect(() =>{
         const getActivities = async () => {
             try{ 
+                setCards([]);
                 let nullActivities = await axios.post("/getNullParticipations", {
                     nameToSearch: user.name,
                 })
@@ -35,7 +37,7 @@ const ListOfActivities = () => {
             }
         };
         getActivities();
-    }, []);
+    }, [joined]);
 
     const PushCard = (activity) => {
         const cardToAdd = (
@@ -43,6 +45,7 @@ const ListOfActivities = () => {
                 <h1 className='card-title' style={{color: "green", fontSize: "xx-large", textAlign: "center"}}>{activity.name}</h1>
                 <p className='card-content' style={{ fontSize: "x-large", textAlign: "center"}}>{activity.description}</p>
                 <p className='class-footer' style={{ fontSize: "large", textAlign: "center"}}>{activity.date}</p>
+                <button className="button is-primary" type="submit" onClick={(e) => JoinActivity(e, activity.id)}>Apuntate</button>
             </div>
         );
         setCards(cards => [...cards, cardToAdd]);
@@ -50,6 +53,20 @@ const ListOfActivities = () => {
 
     function compareDates(a , b){
         return new Date(a.date) - new Date(b.date);
+    }
+    const JoinActivity = async(e, idActivity) => {
+        e.preventDefault();
+        try{
+            await axios.post("/addParticipation", {
+                userId: user.id,
+                activityId: idActivity,
+            });
+            setJoined(!joined);
+        }  catch (error) {
+            if (error.response) {
+                setMsg(error.response.data.msg);
+            }
+        }
     }
     const GetActivitiesByDate = async(e) => {
         e.preventDefault();

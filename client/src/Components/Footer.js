@@ -1,7 +1,7 @@
 import React from 'react'
 const Footer = () => {
     return(
-        <footer className="footer is-responsive" style={{ borderTop: '1px solid lightgray' , position: 'fixed', bottom: '0', width: '100%', height: '1px'} }>
+        <footer className="footer is-responsive" style={{ borderTop: '1px solid lightgray' , bottom: '0', width: '100%', height: '1px'} }>
         <div className="container">
           <div className="columns">
             <div className="column is-responsive">
