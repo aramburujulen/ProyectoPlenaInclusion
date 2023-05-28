@@ -89,25 +89,3 @@ export const ModifyProfessional = async(req, res) => {
 }
 
 
-export const LogIn = async(req, res) => {
-    try{
-        const {email, password} = req.body;
-        const emailUser = await Users.findOne({
-            where: {
-                email: email,
-            }
-        });
-        if(!emailUser){
-            res.json({msg: "Email Incorrecto"});
-            return
-        }
-        var valid = await bcrypt.compare(password, emailUser.password);
-        if(!valid){
-            res.json({msg: "Contraseña Incorrecta"});
-            return
-        }
-        res.json({msg: "¡Datos Correctos, Bienvenido!", emailUser});
-    }catch(error){
-        console.log(error);
-    }
-}

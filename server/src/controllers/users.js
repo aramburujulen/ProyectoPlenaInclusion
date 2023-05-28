@@ -1,7 +1,7 @@
 import Users from "../models/userModel.js";
 import bcrypt from "bcrypt";
-
-//npm install bcrypt
+import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 export const GetUsers = async(req, res) => {
     try{
@@ -51,7 +51,13 @@ export const ChangeEmail = async(req, res) => {
 }
 
 export const ChangePassword = async(req, res) => {
-    const{oldPw, newPw} = req.body;
+    const{userId, newPw} = req.body;
+    const user = await Users.findOne({
+        where:{
+            id: userId,
+        }
+    })
+    const oldPw = user.password;
     const salt = await bcrypt.genSalt();
     const newHashPassword = await bcrypt.hash(newPw, salt);
 
@@ -72,4 +78,66 @@ export const ChangePassword = async(req, res) => {
     }
     await Users.update(values, selector);
     res.json({msg: "Contraseña modificada: " +newPw});
+}
+
+export const LogIn = async(req, res) => {
+    try{
+        console.log(process.env.ACCESS_TOKEN_SECRET);
+        console.log(process.env.REFRESH_TOKEN_SECRET);
+        const {email, password} = req.body;
+        const emailUser = await Users.findOne({
+            where: {
+                email: email,
+            }
+        });
+        if(!emailUser){
+            res.json({msg: "Email Incorrecto"});
+            return
+        }
+        var valid = await bcrypt.compare(password, emailUser.password);
+        if(!valid){
+            res.json({msg: "Contraseña Incorrecta"});
+            return
+        }
+        const userId = emailUser.id;
+        const name  = emailUser.name;
+        const userEmail = emailUser.email; 
+        const accessToken = jwt.sign({userId, name, userEmail}, process.env.ACCESS_TOKEN_SECRET,{
+            expiresIn: '15s'
+        });
+        const refreshToken = jwt.sign({userId, name, userEmail}, process.env.REFRESH_TOKEN_SECRET,{
+            expiresIn: '1d'
+        });
+        await Users.update({refreshToken: refreshToken},{
+            where:{
+                id: userId
+            }
+        });
+        res.cookie('refreshToken', refreshToken,{
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000
+        });
+        res.json({msg: "¡Datos Correctos, Bienvenido!", emailUser, accessToken: accessToken});
+    }catch(error){
+        console.log(error);
+    }
+}
+
+export const Logout = async(req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    if(!refreshToken) return res.sendStatus(204);
+    const user = await Users.findAll({
+        where:{
+            refreshToken: refreshToken
+        }
+    });
+    if(!user[0]) return res.sendStatus(204);
+    const userId = user[0].id;
+    await Users.update({refresh_token: null},{
+        where:{
+            id: userId
+        }
+    });
+    res.clearCookie('refreshToken');
+    return res.sendStatus(200);
 }

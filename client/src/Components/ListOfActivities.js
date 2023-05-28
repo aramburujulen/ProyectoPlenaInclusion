@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import jwt_decode from "jwt-decode";
 
 const ListOfActivities = () => {
-    const { state } = useLocation();
-    const user = state.user;
+    const localToken = localStorage.getItem("accessToken");
+    const {name} = jwt_decode(localToken);
+    const {userId} = jwt_decode(localToken);
+    const {email} = jwt_decode(localToken);
+    const [user, setUser] = useState({
+        userId: userId,
+        name: name,
+        email: email
+    });
     const [msg, setMsg] = useState('');
     const [dateInit, setDateInit] = useState('');
     const [dateEnd, setDateEnd] = useState('');
     const navigate = useNavigate();
     const [cards, setCards] = useState([]);
     const [joined, setJoined] = useState(false);
+    const [token, setToken] = useState('');
+    const [expire, setExpire] = useState('')
     var currentDate = new Date();
     var endDate = new Date();
     endDate.setDate(currentDate.getDate() + 7);
@@ -20,6 +30,7 @@ const ListOfActivities = () => {
     useEffect(() =>{
         const getActivities = async () => {
             try{ 
+                refreshToken();
                 setCards([]);
                 let nullActivities = await axios.post("/getNullParticipations", {
                     nameToSearch: user.name,
@@ -39,14 +50,76 @@ const ListOfActivities = () => {
         getActivities();
     }, [joined]);
 
+    const refreshToken = async () => {
+        try {
+            const response = await axios.get('/token');
+            setToken(response.data.accessToken);
+            const decoded = jwt_decode(response.data.accessToken);
+            setUser({
+                ...user, 
+                userId: decoded.userId,
+                name: decoded.name,
+                email: decoded.email
+            });
+            setExpire(decoded.exp);
+        } catch (error) {
+            if (error.response) {
+                navigate("/");
+            }
+        }
+    }
+    const axiosJWT = axios.create();
+
+    axiosJWT.interceptors.request.use(async (config) => {
+        const currentDate = new Date();
+        if (expire * 1000 < currentDate.getTime() || expire == undefined) {
+            const response = await axios.get('/token');
+            config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+            setToken(response.data.accessToken);
+            const decoded = jwt_decode(response.data.accessToken);
+            setUser({
+                ...user, // Copy other fields
+                userId: decoded.userId,
+                name: decoded.name,
+                email: decoded.email
+            });
+            config.params = {
+                userId: decoded.userId
+            }
+            setExpire(decoded.exp);
+        } else {
+            config.headers.Authorization = `Bearer ${token}`;
+            config.params = {
+                userId: user.userId
+            }
+        }
+        return config;
+    }, (error) => {
+        return Promise.reject(error);
+    });
+
     const PushCard = (activity) => {
-        const cardToAdd = (
-            <div className="card" style={{borderRadius: "15%"}}>
-                <h1 className='card-title' style={{color: "green", fontSize: "xx-large", textAlign: "center"}}>{activity.name}</h1>
-                <p className='card-content' style={{ fontSize: "x-large", textAlign: "center"}}>{activity.description}</p>
-                <p className='class-footer' style={{ fontSize: "large", textAlign: "center"}}>{activity.date}</p>
-                <button className="button is-primary" type="submit" onClick={(e) => JoinActivity(e, activity.id)}>Apuntate</button>
-            </div>
+        const  cardToAdd = (
+            <div class="card" style={{height: "100%"}}>
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image"></img>
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="media-content">
+                        <p class="title is-4">{activity.name}</p>
+                    </div>
+                    <div class="content">
+                        {activity.description}
+                    </div>
+                    <div class="content">
+                    
+                    <time datetime="2016-1-1">{activity.date}</time>
+                    </div>
+                    <button onClick={(e) => JoinActivity(e, activity.id)} style={{ backgroundColor: 'green'}}>JOIN</button>
+                </div>
+        </div>
         );
         setCards(cards => [...cards, cardToAdd]);
     }
@@ -56,10 +129,17 @@ const ListOfActivities = () => {
     }
     const JoinActivity = async(e, idActivity) => {
         e.preventDefault();
+        await refreshToken();
         try{
+            const tokenTemp = localStorage.getItem("accessToken");
+            console.log(tokenTemp)
             await axios.post("/addParticipation", {
-                userId: user.id,
+                userId: user.userId,
                 activityId: idActivity,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${tokenTemp}`,
+                },
             });
             setJoined(!joined);
         }  catch (error) {

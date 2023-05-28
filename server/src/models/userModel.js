@@ -15,6 +15,12 @@ const Users = db.define("users",{
     },
     age:{
         type: DataTypes.INTEGER
+    },
+    accessToken:{
+        type: DataTypes.STRING
+    },
+    refreshToken:{
+        type: DataTypes.STRING
     }
 },{
     freezeTableName: true

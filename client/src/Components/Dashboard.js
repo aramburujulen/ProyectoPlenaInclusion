@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import jwt_decode from "jwt-decode";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import Cookies from "js-cookie";
 
 const Dashboard = () => {
-    const { state } = useLocation();
-    const user = state.user;
+    const localToken = localStorage.getItem("accessToken");
+    const {name} = jwt_decode(localToken);
+    const {userId} = jwt_decode(localToken);
+    const {email} = jwt_decode(localToken);
+    const [user, setUser] = useState({
+        userId: userId,
+        name: name,
+        email: email
+    });
     const [showChangeEmail, setShowChangeEmail] = useState(false);
     const [showChangePassword, setShowChangePassword] = useState(false);
     const [newEmail, setNewEmail] = useState('');
@@ -14,6 +25,9 @@ const Dashboard = () => {
     const [dateEnd, setDateEnd] = useState('');
     const navigate = useNavigate();
     const [cards, setCards] = useState([]);
+    const [token, setToken] = useState('');
+    const [expire, setExpire] = useState('');
+    const [wantsNotifs, setWantsNotifs] = useState(false);
     var currentDate = new Date();
     var endDate = new Date();
     endDate.setDate(currentDate.getDate() + 7);
@@ -24,8 +38,12 @@ const Dashboard = () => {
      * Post: Shows the activities the participant has joined that take place in the following 7 days. Does this on component load.
      */
     useEffect(() => {
+        refreshToken();
         const getActivities = async () => {
             try {
+                await refreshToken();
+                setCards([]);
+                console.log(user.name);
                 let participations = await axios.post("/getUserParticipations", {
                     nameToSearch: user.name,
                 })
@@ -47,9 +65,77 @@ const Dashboard = () => {
                     setMsg(error.response.data.msg);
                 }
             }
-        };
+        }; 
         getActivities();
     }, []);
+    
+    /**
+     * Pre:---
+     * Post: Changes the user's choice based on the state of the checkbox.
+     */
+    const handleChange = async() =>{
+        setWantsNotifs(!wantsNotifs);
+        if(wantsNotifs){
+            await axios.post("/changeNotifs", {
+                id: user.userId,
+                notifications: true
+            });
+        }
+        else{
+            await axios.post("/changeNotifs", {
+                id: user.userId,
+                notifications: false
+            });
+        }
+    }
+    const refreshToken = async () => {
+        try {
+            const response = await axios.get('/token');
+            setToken(response.data.accessToken);
+            const decoded = jwt_decode(response.data.accessToken);
+            setUser({
+                ...user, 
+                userId: decoded.userId,
+                name: decoded.name,
+                email: decoded.email
+            });
+            console.log(user);
+            setExpire(decoded.exp);
+        } catch (error) {
+            if (error.response) {
+                navigate("/");
+            }
+        }
+    }
+    const axiosJWT = axios.create();
+
+    axiosJWT.interceptors.request.use(async (config) => {
+        const currentDate = new Date();
+        if (expire * 1000 < currentDate.getTime() || expire == undefined) {
+            const response = await axios.get('/token');
+            config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+            setToken(response.data.accessToken);
+            const decoded = jwt_decode(response.data.accessToken);
+            setUser({
+                ...user, // Copy other fields
+                userId: decoded.userId,
+                name: decoded.name,
+                email: decoded.email
+            });
+            config.params = {
+                userId: decoded.userId
+            }
+            setExpire(decoded.exp);
+        } else {
+            config.headers.Authorization = `Bearer ${token}`;
+            config.params = {
+                userId: user.userId
+            }
+        }
+        return config;
+    }, (error) => {
+        return Promise.reject(error);
+    });
 
     /**
      * Pre:---
@@ -58,11 +144,25 @@ const Dashboard = () => {
      */
     const PushCard = (activity) => {
         const cardToAdd = (
-            <div className="card" style={{ borderRadius: "15%", height:"100%" }}>
-                <h1 className='card-title' style={{ color: "green", fontSize: "xx-large", textAlign: "center" }}>{activity.name}</h1>
-                <p className='card-content' style={{ fontSize: "x-large", textAlign: "center" }}>{activity.description}</p>
-                <p className='class-footer' style={{ fontSize: "large", textAlign: "center" }}>{activity.date}</p>
-            </div>
+            <div class="card" style={{height: "100%"}}>
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                    <img src="https://7esl.com/wp-content/uploads/2022/08/team-sports.jpg" alt="Placeholder image"></img>
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="media-content">
+                        <p class="title is-4">{activity.name}</p>
+                    </div>
+                    <div class="content">
+                        {activity.description}
+                    </div>
+                    <div class="content">
+                    
+                    <time datetime="2016-1-1">{activity.date}</time>
+                    </div>
+                </div>
+        </div>
         );
         setCards(cards => [...cards, cardToAdd]);
     }
@@ -71,13 +171,22 @@ const Dashboard = () => {
         //We empty the array of cards
         setCards([]);
         try {
+            await refreshToken();
             let participations = await axios.post("/getUserParticipations", {
                 nameToSearch: user.name,
+            },{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             })
             let activities = [];
             for (let i = 0; i < participations.data.length; i++) {
                 let activity = await axios.post("/findActivityById", {
                     id: participations.data[i].activityId,
+                },{
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 })
                 activities[i] = activity;
             }
@@ -108,38 +217,75 @@ const Dashboard = () => {
 
     const ChangeEmail = async (e) => {
         e.preventDefault(e);
-        try {
-            await axios.post("/changeEmail", {
-                email: user.email,
-                newEmail: newEmail,
-            }).then((response) => {
-                alert(response.data.msg);
-                navigate("/dashboard", { state: { user: { ...user, email: newEmail } } });
-            })
-        } catch (error) {
-            if (error.response) {
-                setMsg(error.response.data.msg);
-            }
-        }
+        confirmAlert({
+            title: 'Confirmacion',
+            message: 'Estas seguro de que quieres cambiarlo?',
+            buttons: [{
+                label: 'Si',
+                onClick: async() => {
+                    try {
+                        await axios.post("/changeEmail", {
+                            email: user.email,
+                            newEmail: newEmail,
+                        }, {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }).then((response) => {
+                            alert(response.data.msg);
+                            navigate("/dashboard");
+                        })
+                    } catch (error) {
+                        if (error.response) {
+                            setMsg(error.response.data.msg);
+                        }
+                    }
+                }
+            },{
+                label: 'No',
+                onClick: () => {
+                    console.log('No clicked');
+                }
+            }]
+        });
     }
     const ChangePassword = async (e) => {
         e.preventDefault(e);
-        try {
-            await axios.post("/changePassword", {
-                oldPw: user.password,
-                newPw: newPassword,
-            }).then((response) => {
-                alert(response.data.msg);
-                navigate("/login")
-            })
-        } catch (error) {
-            if (error.response) {
-                setMsg(error.response.data.msg);
-            }
-        }
+        confirmAlert({
+            title: 'Confirmacion',
+            message: 'Estas seguro de que quieres cambiarla?',
+            buttons: [{
+                label: 'Si',
+                onClick: async() => {
+                    try {
+                        await axios.post("/changePassword", {
+                            userId: user.userId,
+                            newPw: newPassword,
+                        },{
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }).then((response) => {
+                            alert(response.data.msg);
+                            navigate("/login")
+                        })
+                    } catch (error) {
+                        if (error.response) {
+                            setMsg(error.response.data.msg);
+                        }
+                    }
+                }
+            },
+            {
+                label: 'No',
+                onClick: () => {
+                }
+            }]
+        });
+        
     }
     const goToList = () => {
-        navigate("/listOfActivities", { state: { user: user } });
+        navigate("/listOfActivities");
     }
     return (
         <section>
@@ -159,6 +305,11 @@ const Dashboard = () => {
                                     <div className="media-content">
                                         <p className="title is-40">{user.name}</p>
                                         <p className="subtitle is-60">{user.email}</p>
+                                        <div>
+                                            Activar Notificaciones 
+                                            <input type='checkbox' checked={wantsNotifs} onChange={handleChange}></input>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                                 <div className="content">
