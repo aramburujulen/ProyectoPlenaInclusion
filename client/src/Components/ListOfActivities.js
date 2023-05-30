@@ -5,9 +5,9 @@ import jwt_decode from "jwt-decode";
 
 const ListOfActivities = () => {
     const localToken = localStorage.getItem("accessToken");
-    const {name} = jwt_decode(localToken);
-    const {userId} = jwt_decode(localToken);
-    const {email} = jwt_decode(localToken);
+    const { name } = jwt_decode(localToken);
+    const { userId } = jwt_decode(localToken);
+    const { email } = jwt_decode(localToken);
     const [user, setUser] = useState({
         userId: userId,
         name: name,
@@ -27,17 +27,17 @@ const ListOfActivities = () => {
     currentDate = currentDate.toISOString().slice(0, 10);
     endDate = endDate.toISOString().slice(0, 10);
 
-    useEffect(() =>{
+    useEffect(() => {
         const getActivities = async () => {
-            try{ 
+            try {
                 refreshToken();
                 setCards([]);
                 let nullActivities = await axios.post("/getNullParticipations", {
                     nameToSearch: user.name,
                 })
                 nullActivities.data = nullActivities.data.sort(compareDates);
-                for(let i = 0; i < nullActivities.data.length; i++){
-                    if(nullActivities.data[i].date >= currentDate && nullActivities.data[i].date <= endDate){
+                for (let i = 0; i < nullActivities.data.length; i++) {
+                    if (nullActivities.data[i].date >= currentDate && nullActivities.data[i].date <= endDate) {
                         PushCard(nullActivities.data[i]);
                     }
                 }
@@ -57,7 +57,7 @@ const ListOfActivities = () => {
             const decoded = jwt_decode(response.data.accessToken);
             localStorage.setItem("accessToken", response.data.accessToken);
             setUser({
-                ...user, 
+                ...user,
                 userId: decoded.userId,
                 name: decoded.name,
                 email: decoded.email
@@ -104,32 +104,33 @@ const ListOfActivities = () => {
     * Post: Adds a new card with the activity we wish to add.
      */
     const PushCard = (activity) => {
-        const  cardToAdd = (
-            <div class="card" style={{height: "100%"}}>
-                <div class="card-image">
-                    <figure class="image is-4by3">
-                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image"></img>
+        const cardToAdd = (
+            <div className="card" style={{ height: "100%", flexDirection: "column", display: "flex" }}>
+                <div className="card-image">
+                    <figure className="image is-4by3">
+                        <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
                     </figure>
                 </div>
-                <div class="card-content">
-                    <div class="media-content">
-                        <p class="title is-4">{activity.name}</p>
+                <div className="card-content" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div className="media-content">
+                        <p className="title is-4">{activity.name}</p>
                     </div>
-                    <div class="content">
+                    <div className="content">
                         {activity.description}
                     </div>
-                    <div class="content">
-                    
-                    <time datetime="2016-1-1">{activity.date}</time>
+                    <div className="content">
+                        <time dateTime="2016-1-1">{activity.date}</time>
                     </div>
-                    <button onClick={(e) => JoinActivity(e, activity.id)} style={{ backgroundColor: 'green'}}>Apuntarse</button>
+                    <div className="content">
+                        <button className="button is-success" onClick={(e) => JoinActivity(e, activity.id)}>JOIN</button>
+                    </div>
                 </div>
-        </div>
+            </div>
         );
         setCards(cards => [...cards, cardToAdd]);
     }
 
-    function compareDates(a , b){
+    function compareDates(a, b) {
         return new Date(a.date) - new Date(b.date);
     }
 
@@ -137,10 +138,10 @@ const ListOfActivities = () => {
     * Pre:---
     * Post: Sends a query to add a participation for the user in the respective activity. Updates the joined boolean.
     */
-    const JoinActivity = async(e, idActivity) => {
+    const JoinActivity = async (e, idActivity) => {
         e.preventDefault();
         await refreshToken();
-        try{
+        try {
             const tokenTemp = localStorage.getItem("accessToken");
             console.log(tokenTemp);
             await axios.post("/addParticipation", {
@@ -152,7 +153,7 @@ const ListOfActivities = () => {
                 },
             });
             setJoined(!joined);
-        }  catch (error) {
+        } catch (error) {
             if (error.response) {
                 setMsg(error.response.data.msg);
             }
@@ -163,16 +164,16 @@ const ListOfActivities = () => {
     * Pre:---
     * Post: Gets the activitie the user has NOT joined yet that take place in the next 7 days.
     */
-    const GetActivitiesByDate = async(e) => {
+    const GetActivitiesByDate = async (e) => {
         e.preventDefault();
         setCards([]);
-        try{ 
+        try {
             let nullActivities = await axios.post("/getNullParticipations", {
                 nameToSearch: user.name,
             })
             nullActivities.data = nullActivities.data.sort(compareDates);
-            for(let i = 0; i < nullActivities.data.length; i++){
-                if(nullActivities.data[i].date >= dateInit && nullActivities.data[i].date <= dateEnd){
+            for (let i = 0; i < nullActivities.data.length; i++) {
+                if (nullActivities.data[i].date >= dateInit && nullActivities.data[i].date <= dateEnd) {
                     PushCard(nullActivities.data[i]);
                 }
             }
@@ -183,31 +184,33 @@ const ListOfActivities = () => {
         }
     }
     const goToDashboard = () => {
-        navigate("/dashboard", {state:{ user: user}});
+        navigate("/dashboard", { state: { user: user } });
     }
-    return(  
+    return (
         <section>
-            <h1 style={{marginTop: "2em", textAlign:"center", fontSize:"xx-large"}}>Lista de actividades</h1>
+            <h1 style={{ marginTop: "2em", textAlign: "center", fontSize: "xx-large" }}>Lista de actividades</h1>
             <div>
-                <button className="button is-primary" type="submit" onClick={goToDashboard}>Dashboard</button>
+                <button className="button is-primary" style={{ marginLeft: "5em" }} type="submit" onClick={goToDashboard}>Dashboard</button>
             </div>
-            <div className="columns is-centered" style={{marginTop: "0%", width: "100%"}}>
+            <div className="columns is-centered" style={{ marginTop: "0%", width: "100%" }}>
                 <form onSubmit={GetActivitiesByDate}>
-                    <div className="columns">
-                        <div className="column is-half">
-                            <input className="input is-primary" type="date" placeholder="dateInit"  style={{ marginTop: "40%", paddingBottom: "10%"}} value={dateInit} onChange={(e) => setDateInit(e.target.value)}/>
+                    <div className="columns is-centered align-row">
+                        <div className="column auto">
+                            <input className="input is-primary" type="date" placeholder="dateInit" value={dateInit} onChange={(e) => setDateInit(e.target.value)} />
                         </div>
-                        <div className="column is-half">
-                            <input className="input is-primary" type="date" placeholder="dateEnd" style={{ marginTop: "40%", paddingBottom: "10%" }} value={dateEnd} onChange={(e) => setDateEnd(e.target.value)}/>
+                        <div className="column auto">
+                            <input className="input is-primary" type="date" placeholder="dateEnd" value={dateEnd} onChange={(e) => setDateEnd(e.target.value)} />
                         </div>
-                    </div> 
-                    <button className="button is-primary" type="submit">Buscar</button>
+                        <div className="column auto">
+                            <button className="button is-primary" type="submit">Buscar</button>
+                        </div>
+                    </div>
                 </form>
             </div>
-            <div className="card-grid expand is-mobile" style={{ display: "grid", paddingBottom: "20em", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "10px"}}>
-            {cards.map((card, index) => <div key={index} className="card" style={{width: "100%", gap: "10%", display:"in-line"}}>{card}</div>)}
+            <div className="card-grid expand is-mobile" style={{ display: "grid", padding: "5em", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1em", justifyItems: 'center' }}>
+                {cards.map((card, index) => <div key={index} className="card" style={{ width: "100%", gap: "10%", display: "in-line" }}>{card}</div>)}
             </div>
-    </section> 
+        </section>
     )
 
 }

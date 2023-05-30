@@ -323,7 +323,7 @@ const Dashboard = () => {
                                     <div className="media-content">
                                         <p className="title is-40">{user.name}</p>
                                         <p className="subtitle is-60">{user.email}</p>
-                                        <button className="button is-primary is-outlined" onClick={logout}>
+                                        <button className="button is-danger is-outlined" onClick={logout}>
                                             Logout
                                         </button>
                                         <div>
@@ -335,7 +335,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="content">
                                     <div className="buttons are-small">
-                                        <button className="button is-primary is-outlined" onClick={showEmailForm}>
+                                        <button className="button is-warning is-outlined" onClick={showEmailForm}>
                                             Cambiar Email</button>
                                         {showChangeEmail && (
                                             <form onSubmit={ChangeEmail} style={{ position: "absolute", marginTop: "20em", backgroundColor: 'white' }}>
@@ -355,7 +355,7 @@ const Dashboard = () => {
                                                 </div>
                                             </form>
                                         )}
-                                        <button className="button is-primary is-outlined" onClick={showPasswordForm}>
+                                        <button className="button is-warning is-outlined" onClick={showPasswordForm}>
                                             Cambiar Contraseña</button>
                                         {showChangePassword && (
                                             <form onSubmit={ChangePassword} style={{ position: "absolute", marginTop: "20em", backgroundColor: 'white' }}>
@@ -382,20 +382,24 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div>
-                    <button className="button is-primary" type="submit" onClick={goToList}>Lista de actividades</button>
+                    <button className="button is-primary mb-5" type="submit" style={{ marginLeft: "1em"}} onClick={goToList}>Lista de actividades</button>
                 </div>
-                <div className="columns is-centered" style={{ marginTop: "0%", width: "100%", border: "1px solid black" }}>
-                    Buscar Actividad Por Fecha:
+                <div className="columns is-centered" style={{ marginLeft: "1em", width: "100%", borderBottom: "1px solid", padding:"2em"}}>
                     <form onSubmit={getActivitiesByDate}>
-                        <div className="columns" style={{ paddingLeft: "4vh" }}>
-                            <div className="column is-half">
+                        <div className="columns">
+                            <div className='column auto'>
+                            <p>Buscar Actividades en las que participo:</p> 
+                            </div>
+                            <div className="column auto">
                                 <input className="input is-primary" type="date" placeholder="dateInit" value={dateInit} onChange={(e) => setDateInit(e.target.value)} />
                             </div>
-                            <div className="column is-half">
+                            <div className="column auto">
                                 <input className="input is-primary" type="date" placeholder="dateEnd" value={dateEnd} onChange={(e) => setDateEnd(e.target.value)} />
                             </div>
+                            <div className='column auto'>
+                                <button className="button is-primary" type="submit">Buscar</button>
+                            </div>
                         </div>
-                        <button className="button is-primary" type="submit">Buscar</button>
                     </form>
                 </div>
                 <div className="card-grid expand is-mobile" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "10px" }}>
