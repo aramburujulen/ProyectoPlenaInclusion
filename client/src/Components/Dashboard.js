@@ -69,6 +69,15 @@ const Dashboard = () => {
         getActivities();
     }, []);
     
+    const logout = async() => {
+        try{
+            await axios.delete("/logout");
+            localStorage.removeItem('accessToken');
+            navigate("/");
+        } catch(error){
+            console.log(error);
+        }
+    };
     /**
      * Pre:---
      * Post: Changes the user's choice based on the state of the checkbox.
@@ -215,6 +224,10 @@ const Dashboard = () => {
         setShowChangePassword(!showChangePassword);
     }
 
+    /**
+     * Pre:---
+     * Post: Sends a query to change the user's email.
+     */
     const ChangeEmail = async (e) => {
         e.preventDefault(e);
         confirmAlert({
@@ -249,6 +262,10 @@ const Dashboard = () => {
             }]
         });
     }
+    /**
+     * Pre:---
+     * Post: Sends a query to change the user's password (new one will also be encrypted).
+     */
     const ChangePassword = async (e) => {
         e.preventDefault(e);
         confirmAlert({
@@ -305,6 +322,9 @@ const Dashboard = () => {
                                     <div className="media-content">
                                         <p className="title is-40">{user.name}</p>
                                         <p className="subtitle is-60">{user.email}</p>
+                                        <button className="button is-primary is-outlined" onClick={logout}>
+                                            Logout
+                                        </button>
                                         <div>
                                             Activar Notificaciones 
                                             <input type='checkbox' checked={wantsNotifs} onChange={handleChange}></input>

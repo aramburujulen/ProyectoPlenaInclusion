@@ -1,6 +1,7 @@
 import Activities from "../models/activityModel.js";
 import Users from "../models/userModel.js";
 import Participation from "../models/participationModel.js";
+import { Sequelize } from "sequelize";
 
 
 export const AddParticipation = async (req, res) => {
@@ -85,6 +86,11 @@ export const GetParticipantParticipations = async (req, res) => {
 }
 export const GetJoinedActivities = async (id) => {
     try {
+        var currentDate = new Date();
+        var endDate = new Date();
+        endDate.setDate(currentDate.getDate() + 7);
+        currentDate = currentDate.toISOString().slice(0, 10);
+        endDate = endDate.toISOString().slice(0, 10);
         const usersActivities = await Participation.findAll({
             include: [{
                 model: Activities,
@@ -98,16 +104,29 @@ export const GetJoinedActivities = async (id) => {
             }],
             attributes: ['userId', 'activityId'],
         });
+        console.log("PARTTTTTTT "+usersActivities.length);
         const allActivities = await Activities.findAll({
-            attributes: ["id", "name", "description", "isActive", "maxParticipants", "date"]
-        });
-        for (let i = 0; i < usersActivities.length; i++) {
-            for (let j = 0; j < allActivities.length; j++) {
-                if (usersActivities[i].activityId != allActivities[j].id) {
-                    allActivities.splice(j, 1);
+            attributes: ["id", "name", "description", "isActive", "maxParticipants", "date"],
+            where:{
+                date: {
+                    [Sequelize.Op.between]: [currentDate, endDate],
                 }
             }
+        });
+        
+        for (let i = allActivities.length - 1; i >= 0; i--) {
+            let found = false;
+            for (let j = 0; j < usersActivities.length; j++) {
+                if (usersActivities[j].activityId === allActivities[i].id) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                allActivities.splice(i, 1);
+            }
         }
+        console.log(allActivities.length);
         return allActivities;
     } catch(error){
         console.log(error);

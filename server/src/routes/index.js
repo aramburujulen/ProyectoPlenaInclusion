@@ -18,7 +18,6 @@ router.post("/addActivity", AddActivity);
 router.post("/findActivityById", FindActivityById);
 router.post("/getActivities", GetActivities);
 router.post("/addParticipation", verifyToken, AddParticipation);
-//router.post("/getParticipations", GetParticipations);
 router.post("/registerProfessional", RegisterProfessional);
 router.post("/getUserParticipations", GetParticipantParticipations);
 router.post("/getAvailableActivities", GetAvailableActivities);

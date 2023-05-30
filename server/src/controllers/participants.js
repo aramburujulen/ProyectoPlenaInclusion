@@ -6,7 +6,11 @@ import nodemailer from "nodemailer";
 import { GetJoinedActivities, GetParticipantParticipations } from "./participations.js";
 import cron from "node-cron";
 
-
+/**
+ * Pre:---
+ * Post: Function the will be called upon to send emails, be it weekly or a conventional one post registration. Sets up
+ * the email sender, the destination (via parameters) and the type of email.
+ */
 const sendEmail = async(email, userName, pass, isWeekly, id) => {
     const transport = nodemailer.createTransport({
         service: "gmail",
@@ -55,6 +59,7 @@ const sendEmail = async(email, userName, pass, isWeekly, id) => {
     }
     
 }
+
 export const GenerateAccount = async(req, res) => {
     const{email, name, age, notifications, disability} = req.body;
     console.log(notifications);
@@ -82,9 +87,9 @@ export const GenerateAccount = async(req, res) => {
         console.log(error);
     }
 }
+
 const getAllParticipantsWithCheck = async() => {
     try {
-        // Fetch all participants from the database
         const participantIds = await Participants.findAll({
             attributes: ['userId'],
             where:{
@@ -99,27 +104,26 @@ const getAllParticipantsWithCheck = async() => {
                 id: participantId,
                 },
             });
-            console.log("Participant:", participant);
             participants.push(participant);
         }
-        console.log("Participants:", participants);
         return participants;
         } catch (error) {
             console.log(error);
     }
 };
-cron.schedule('43 19 * * SUN', async () => {
+
+//We set up the weekly email to go off at 9:30 every monday
+cron.schedule('30 9 * * MON', async () => {
     try {
         const participants = await getAllParticipantsWithCheck();
         for (let i = 0; i < participants.length; i++) {
-            console.log("SENDING EMAIL WITH "+participants[i].id);
             await sendEmail(participants[i].email, participants[i].name, null, true, participants[i].id);
         }
-        console.log('Weekly emails sent to all participants');
     } catch (error) {
         console.error('Error sending weekly emails:', error);
     }
 });
+
 export const changeNotifs = async(req, res) => {
     try{
         const{id, notifications} = req.body;
