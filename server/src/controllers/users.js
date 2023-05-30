@@ -13,6 +13,7 @@ export const GetUsers = async(req, res) => {
         console.log(error);
     }
 }
+
 export const Register = async(req,res) =>{
     const{username, password, confPassword} = req.body;
     if(password !== confPassword) return res.status(400).json({msg: "Password and Confirmation don't match"});
@@ -39,7 +40,6 @@ export const ChangeEmail = async(req, res) => {
     var values = {
         email: newEmail,
     }
-
     var selector = {
         where: {
             email: userToChange.email,
@@ -60,7 +60,6 @@ export const ChangePassword = async(req, res) => {
     const oldPw = user.password;
     const salt = await bcrypt.genSalt();
     const newHashPassword = await bcrypt.hash(newPw, salt);
-
     const userToChange = await Users.findOne({
         where: {
             password: oldPw,
@@ -69,7 +68,6 @@ export const ChangePassword = async(req, res) => {
     var values = {
         password: newHashPassword,
     }
-
     var selector = {
         where: {
             email: userToChange.email,

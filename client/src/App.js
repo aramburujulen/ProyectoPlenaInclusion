@@ -23,7 +23,6 @@ function App() {
       </BrowserRouter>
       <Footer/>
     </div>
-    
   );
 }
 

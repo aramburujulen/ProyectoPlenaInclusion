@@ -85,7 +85,7 @@ const RegisterAcc = () => {
                                     </div>
                                 </div>
                                 <div className="field mt-5">
-                                    <label className="label">Disabilidad</label>
+                                    <label className="label">Discapacidad</label>
                                     <div className="controls">
                                         <input type="text" className="input" placeholder="Disabilidad" value={disability} onChange={(e) => setDisability(e.target.value)} />
                                     </div>
@@ -150,9 +150,7 @@ const RegisterAcc = () => {
                     </div>
                 </div>
             </div>
-            
         </section>
-        
     )
 }
 export default RegisterAcc;

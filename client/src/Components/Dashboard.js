@@ -43,7 +43,6 @@ const Dashboard = () => {
             try {
                 await refreshToken();
                 setCards([]);
-                console.log(user.name);
                 let participations = await axios.post("/getUserParticipations", {
                     nameToSearch: user.name,
                 })
@@ -102,13 +101,13 @@ const Dashboard = () => {
             const response = await axios.get('/token');
             setToken(response.data.accessToken);
             const decoded = jwt_decode(response.data.accessToken);
+            localStorage.setItem("accessToken", response.data.accessToken);
             setUser({
                 ...user, 
                 userId: decoded.userId,
                 name: decoded.name,
                 email: decoded.email
             });
-            console.log(user);
             setExpire(decoded.exp);
         } catch (error) {
             if (error.response) {
@@ -237,12 +236,13 @@ const Dashboard = () => {
                 label: 'Si',
                 onClick: async() => {
                     try {
+                        await refreshToken();
                         await axios.post("/changeEmail", {
                             email: user.email,
                             newEmail: newEmail,
                         }, {
                             headers: {
-                                Authorization: `Bearer ${token}`,
+                                Authorization: `Bearer ${localToken}`,
                             },
                         }).then((response) => {
                             alert(response.data.msg);
@@ -275,12 +275,13 @@ const Dashboard = () => {
                 label: 'Si',
                 onClick: async() => {
                     try {
+                        await refreshToken();
                         await axios.post("/changePassword", {
                             userId: user.userId,
                             newPw: newPassword,
                         },{
                             headers: {
-                                Authorization: `Bearer ${token}`,
+                                Authorization: `Bearer ${localToken}`,
                             },
                         }).then((response) => {
                             alert(response.data.msg);

@@ -16,6 +16,7 @@ export const AddParticipation = async (req, res) => {
         console.log(error);
     }
 }
+
 export const GetParticipations = async (req, res) => {
     try {
         const participations = await Participation.findAll({
@@ -62,6 +63,7 @@ export const GetNullParticipations = async (req, res) => {
         console.log(error);
     }
 }
+
 export const GetParticipantParticipations = async (req, res) => {
     try {
         const { nameToSearch } = req.body;
@@ -84,6 +86,11 @@ export const GetParticipantParticipations = async (req, res) => {
         console.log(error);
     }
 }
+/**
+ * Pre:---
+ * Post: Gets an array of activity objects that the user has joined, eliminates the ones they havent joined
+ * from the array of all activities.
+ */
 export const GetJoinedActivities = async (id) => {
     try {
         var currentDate = new Date();
@@ -104,7 +111,6 @@ export const GetJoinedActivities = async (id) => {
             }],
             attributes: ['userId', 'activityId'],
         });
-        console.log("PARTTTTTTT "+usersActivities.length);
         const allActivities = await Activities.findAll({
             attributes: ["id", "name", "description", "isActive", "maxParticipants", "date"],
             where:{
@@ -126,12 +132,12 @@ export const GetJoinedActivities = async (id) => {
                 allActivities.splice(i, 1);
             }
         }
-        console.log(allActivities.length);
         return allActivities;
     } catch(error){
         console.log(error);
     }
 }
+
 export const RemoveParticipation = async (req, res) => {
     try {
         const { idUs, idAc } = req.body;

@@ -29,14 +29,13 @@ const Footer = () => {
                         />
                     </a>
                 </figure>
-
                 </div>
               </div>
             </div>
           </div>
         </div>
       </footer>
- )
+    )
 }
 
 export default Footer;

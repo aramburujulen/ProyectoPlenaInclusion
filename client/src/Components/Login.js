@@ -39,11 +39,8 @@ const Login = () => {
 
     return (
         <section className="hero has-background-light is-fullheight is-fullwidth" style={{paddingBottom: "5em"}}>
-
             <div className="hero-body">
-
                 <div className='columns is-centered is-vcentered is-responsive'>
-
                     <div className='column is-flex-desktop is-hidden-mobile'>
                         <img src='https://www.plenainclusion.org/wp-content/uploads/2021/04/Social-media-bro-1536x1536.png' class="img-fluid" style={{height:'100%  '}}></img>
                     </div>
@@ -72,7 +69,6 @@ const Login = () => {
                             </div>
                         </form>
                     </div>
-
                 </div>
                 
             </div>

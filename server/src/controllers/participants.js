@@ -19,7 +19,6 @@ const sendEmail = async(email, userName, pass, isWeekly, id) => {
             pass: "oojyvrkqanhtazne"
         }
     });
-
     if(isWeekly){
         console.log(id);
         const activities = await GetJoinedActivities(id); // Retrieve activities
@@ -27,14 +26,12 @@ const sendEmail = async(email, userName, pass, isWeekly, id) => {
         for(let i = 0; i < activities.length; i++){
             activityNames.push(activities[i].name);
         }
-
         const weeklyMailOptions = {
             from: "llorenteguay@gmail.com",
             to: email,
             subject: `Actividades de esta semana`,
             text: `Hola, ${userName}, hoy es el mejor lunes de la semana, tienes las siguientes actividades: ${activityNames.join(', ')}`
         }
-
         transport.sendMail(weeklyMailOptions, function(error, info){
             if (error) {
                 console.log(error);
@@ -57,7 +54,6 @@ const sendEmail = async(email, userName, pass, isWeekly, id) => {
             }
         });
     }
-    
 }
 
 export const GenerateAccount = async(req, res) => {
@@ -88,6 +84,10 @@ export const GenerateAccount = async(req, res) => {
     }
 }
 
+/**
+ * Pre:---
+ * Post: Gets all the participants that have chosen to get notifications.
+ */
 const getAllParticipantsWithCheck = async() => {
     try {
         const participantIds = await Participants.findAll({
@@ -107,8 +107,8 @@ const getAllParticipantsWithCheck = async() => {
             participants.push(participant);
         }
         return participants;
-        } catch (error) {
-            console.log(error);
+    } catch (error) {
+        console.log(error);
     }
 };
 
@@ -124,6 +124,10 @@ cron.schedule('30 9 * * MON', async () => {
     }
 });
 
+/**
+ * Pre:---
+ * Post: Sends an update query whenever the user decides to change their notifications option.
+ */
 export const changeNotifs = async(req, res) => {
     try{
         const{id, notifications} = req.body;
@@ -141,6 +145,7 @@ export const changeNotifs = async(req, res) => {
         console.log(error);
     }
 }
+
 export const RemoveParticipant = async(req, res) => {
     try{
         const{id} = req.body;

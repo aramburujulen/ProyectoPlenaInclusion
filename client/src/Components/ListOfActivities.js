@@ -55,6 +55,7 @@ const ListOfActivities = () => {
             const response = await axios.get('/token');
             setToken(response.data.accessToken);
             const decoded = jwt_decode(response.data.accessToken);
+            localStorage.setItem("accessToken", response.data.accessToken);
             setUser({
                 ...user, 
                 userId: decoded.userId,
@@ -98,6 +99,10 @@ const ListOfActivities = () => {
         return Promise.reject(error);
     });
 
+    /**
+    * Pre:---
+    * Post: Adds a new card with the activity we wish to add.
+     */
     const PushCard = (activity) => {
         const  cardToAdd = (
             <div class="card" style={{height: "100%"}}>
@@ -117,7 +122,7 @@ const ListOfActivities = () => {
                     
                     <time datetime="2016-1-1">{activity.date}</time>
                     </div>
-                    <button onClick={(e) => JoinActivity(e, activity.id)} style={{ backgroundColor: 'green'}}>JOIN</button>
+                    <button onClick={(e) => JoinActivity(e, activity.id)} style={{ backgroundColor: 'green'}}>Apuntarse</button>
                 </div>
         </div>
         );
@@ -127,12 +132,17 @@ const ListOfActivities = () => {
     function compareDates(a , b){
         return new Date(a.date) - new Date(b.date);
     }
+
+    /**
+    * Pre:---
+    * Post: Sends a query to add a participation for the user in the respective activity. Updates the joined boolean.
+    */
     const JoinActivity = async(e, idActivity) => {
         e.preventDefault();
         await refreshToken();
         try{
             const tokenTemp = localStorage.getItem("accessToken");
-            console.log(tokenTemp)
+            console.log(tokenTemp);
             await axios.post("/addParticipation", {
                 userId: user.userId,
                 activityId: idActivity,
@@ -148,6 +158,11 @@ const ListOfActivities = () => {
             }
         }
     }
+
+    /**
+    * Pre:---
+    * Post: Gets the activitie the user has NOT joined yet that take place in the next 7 days.
+    */
     const GetActivitiesByDate = async(e) => {
         e.preventDefault();
         setCards([]);
